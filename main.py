@@ -7,7 +7,7 @@ from google.genai import types
 
 def main():
 #    print("Hello from ai-agent-1!")
-    messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
+    
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
     if api_key == None:
@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description="Chatbot")
     parser.add_argument("user_prompt", type=str, help="User prompt")
     args = parser.parse_args()
+    messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
     
 
     client = genai.Client(api_key=api_key)
