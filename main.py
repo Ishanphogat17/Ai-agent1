@@ -6,6 +6,8 @@ import argparse
 from google.genai import types
 
 
+from prompts import system_prompt
+
 def main():
 #    print("Hello from ai-agent-1!")
     
@@ -24,7 +26,8 @@ def main():
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
         model='gemini-2.5-flash',
-        contents=messages
+        contents=messages,
+        config=types.GenerateContentConfig(system_instruction=system_prompt)
     )
     print(response.text)
     if args.verbose:
