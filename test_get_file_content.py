@@ -9,11 +9,11 @@ print(content[-100:]) # Print last 100 chars to verify logic
 print()
 
 print('Testing get_file_content("calculator", "main.py"):')
-print(get_file_content("calculator", "main.py")[:200]) # Print first 200 chars
+print(get_file_content("calculator", "main.py"))
 print()
 
 print('Testing get_file_content("calculator", "pkg/calculator.py"):')
-print(get_file_content("calculator", "pkg/calculator.py")[:200]) # Print first 200 chars
+print(get_file_content("calculator", "pkg/calculator.py"))
 print()
 
 print('Testing get_file_content("calculator", "/bin/cat"):')
