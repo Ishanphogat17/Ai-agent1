@@ -6,7 +6,7 @@ from google.genai import types
 
 schema_run_python_file = types.FunctionDeclaration(
     name="run_python_file",
-    description="Lists files in a specified directory relative to the working directory, providing file size and directory status",
+    description="Execute a Python file with optional arguments",
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={
