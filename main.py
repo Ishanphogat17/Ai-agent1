@@ -6,7 +6,10 @@ import argparse
 from google.genai import types
 
 
+
 from prompts import system_prompt
+from call_function import available_functions
+
 
 def main():
 #    print("Hello from ai-agent-1!")
@@ -29,10 +32,16 @@ def main():
         contents=messages,
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
-            temperature=0
+            temperature=0,
+            tools=[available_functions]
         )
     )
-    print(response.text)
+    if response.function_calls:
+        for call in response.function_calls:
+            print(f"Function call: {call.name}")
+            print(f"args: {call.args}")
+    else:
+        print(response.text)
     if args.verbose:
         print(f"User prompt: {args.user_prompt}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
