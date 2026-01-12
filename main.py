@@ -2,8 +2,10 @@ import os
 #dotenv is to get env variables
 from dotenv import load_dotenv
 from google import genai
+from google.genai import errors
 import argparse
 from google.genai import types
+import time
 
 
 
@@ -27,15 +29,35 @@ def main():
     
 
     client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model='gemini-2.5-flash',
-        contents=messages,
-        config=types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            temperature=0,
-            tools=[available_functions]
-        )
-    )
+    
+    # Retry logic with exponential backoff
+    max_retries = 3
+    retry_delay = 1  # Initial delay in seconds
+    
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=messages,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    temperature=0,
+                    tools=[available_functions]
+                )
+            )
+            break  # Success, exit retry loop
+        except errors.ServerError as e:
+            if attempt < max_retries - 1:
+                print(f"API error (attempt {attempt + 1}/{max_retries}): {e}. Retrying in {retry_delay}s...", flush=True)
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff
+            else:
+                print(f"API error after {max_retries} attempts: {e}")
+                raise
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            raise
+    
     if response.function_calls:
         for call in response.function_calls:
             print(f"Function call: {call.name}")
