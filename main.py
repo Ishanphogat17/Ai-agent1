@@ -10,7 +10,7 @@ import time
 
 
 from prompts import system_prompt
-from call_function import available_functions
+from call_function import available_functions, call_function
 
 
 def main():
@@ -58,10 +58,32 @@ def main():
             print(f"Unexpected error: {e}")
             raise
     
+    
+    # Handle function calls from the LLM
+    function_results = []
     if response.function_calls:
         for call in response.function_calls:
-            print(f"Function call: {call.name}")
-            print(f"args: {call.args}")
+            # Execute the function call
+            function_call_result = call_function(call, verbose=args.verbose)
+            
+            # Validate the response has parts
+            if not function_call_result.parts:
+                raise Exception("Function call returned empty parts")
+            
+            # Validate the function_response exists
+            if function_call_result.parts[0].function_response is None:
+                raise Exception("Function call returned None function_response")
+            
+            # Validate the response field exists
+            if function_call_result.parts[0].function_response.response is None:
+                raise Exception("Function call returned None response")
+            
+            # Add to results list
+            function_results.append(function_call_result.parts[0])
+            
+            # Print result in verbose mode
+            if args.verbose:
+                print(f"-> {function_call_result.parts[0].function_response.response}")
     else:
         print(response.text)
     if args.verbose:
