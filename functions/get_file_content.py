@@ -8,8 +8,8 @@ from config import MAX_CHARS
 
 from google.genai import types
 
-schema_get_files_content = types.FunctionDeclaration(
-    name="get_files_content",
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
     description="Give the content of a file",
     parameters=types.Schema(
         type=types.Type.OBJECT,
